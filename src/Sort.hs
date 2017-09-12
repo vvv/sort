@@ -1,23 +1,17 @@
-module Sort
-  (qsort,
-   selectionsort
-  ) where
- 
-qsort :: (Num a, Ord a) => [a] -> [a]
-qsort[] = []
-qsort (x:xs) = qsort ys ++ [x] ++ qsort zs
-  where
-    ys = [a | a <- xs, a <= x]
-    zs = [b | b <- xs, b > x]
+{-# OPTIONS_GHC -Wall -Werror #-}
+module Sort where
 
-min_ :: (Num a, Ord a) => a -> a -> a
-min_ a b = if a <= b then a else b
-listmin :: (Num a, Ord a) => [a] -> a
-listmin [x] = x
-listmin (x:xs) = min_ x (listmin xs)
-selectionsort :: (Num a, Ord a) => [a] -> [a]
-selectionsort [x] = [x]
-selectionsort zs = [m] ++ selectionsort ys
-  where
-    m  = listmin zs 
-    ys = [a | a <- zs, a /= m]
+import Data.List (partition)
+
+qsort :: Ord a => [a] -> [a]
+qsort [] = []
+qsort (x:xs) =
+  let (le, gt) = partition (<= x) xs
+  in qsort le ++ [x] ++ qsort gt
+
+selectionsort :: Ord a => [a] -> [a]
+selectionsort [] = []
+selectionsort l@(x:xs) =
+  let m  = foldr min x xs   -- listmin
+      l' = filter (/= m) l  -- [a | a <- l, a /= m]
+  in m : selectionsort l'
