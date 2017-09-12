@@ -6,12 +6,13 @@ import Data.List (partition)
 qsort :: Ord a => [a] -> [a]
 qsort [] = []
 qsort (x:xs) =
-  let (le, gt) = partition (<= x) xs
-  in qsort le ++ [x] ++ qsort gt
+  let (lt, ge) = partition (< x) xs
+  in qsort lt ++ [x] ++ qsort ge
 
 selectionsort :: Ord a => [a] -> [a]
 selectionsort [] = []
-selectionsort l@(x:xs) =
-  let m  = foldr min x xs   -- listmin
-      l' = filter (/= m) l  -- [a | a <- l, a /= m]
-  in m : selectionsort l'
+selectionsort xs =
+  let m = minimum xs  -- Former `listmin`. It could be implemented as
+                      -- minimum (x:xs) = foldr min x xs
+      (lhs, rhs) = partition (== m) xs
+  in lhs ++ selectionsort rhs
